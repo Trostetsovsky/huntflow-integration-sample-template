@@ -7,7 +7,6 @@ import httpx
 from hf_integration_sample.integrations.hf_api import dto
 from hf_integration_sample.app.config import settings
 
-
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 10
@@ -53,6 +52,26 @@ class HFAPIClient:
         response = await self.request("GET", url)
         data = dto.ApplicantOnVacancyStatusCollection.parse_obj(response.json())
         return data.items
+
+    async def get_all_tags(
+            self,
+    ) -> dto.TagList:
+        path = f"/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("GET", url)
+        data = dto.TagList.parse_obj(response.json())
+        return data.items
+
+    async def update_applicant_tags(
+            self,
+            applicant_id: str,
+            tags: dto.UpdatedApplicantTags,
+    ) -> dto.UpdatedApplicantTags:
+        path = f"/applicants/{applicant_id}/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("POST", url, data=tags.json())
+        data = dto.UpdatedApplicantTags.parse_obj(response.json())
+        return data.tags
 
 
 @lru_cache(1)
