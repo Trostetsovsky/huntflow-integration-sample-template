@@ -34,7 +34,7 @@ class ApplicantOnVacancyStatusCollection(BaseModel):
 
 
 class Tag(BaseModel):
-    id: int
+    id: Optional[int]
     name: str
     color: str
 
