@@ -15,5 +15,6 @@ router = APIRouter(dependencies=[Depends(hf_hooks_auth)])
 async def applicant_hook(
     data: VacancyHookRequest = Body(..., description="Request body"),
 ):
+    response = {"status": "ok"}
     await process_vacancy_hook(data)
-    return {"status": "ok"}
+    return response

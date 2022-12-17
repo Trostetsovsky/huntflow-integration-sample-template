@@ -53,6 +53,28 @@ class HFAPIClient:
         data = dto.ApplicantOnVacancyStatusCollection.parse_obj(response.json())
         return data.items
 
+    async def add_applicant_to_the_vacancy(
+            self,
+            applicant_id: int,
+            vacancy_detail: dto.AddApplicantToTheVacancyBase
+    ) -> dto.AddApplicantToTheVacancyResponse:
+        """Function attaches an applicant to the vacancy."""
+        path = f"/applicants/{applicant_id}/vacancy"
+        url = self.get_org_bound_url(path)
+        response = await self.request("POST", url, data=vacancy_detail.json())
+        return dto.AddApplicantToTheVacancyResponse.parse_obj(response.json())
+
+    async def get_applicants(
+            self,
+            query_params: dto.ApplicantSearchQueryParams
+    ):
+        """Function returns the specified applicant."""
+        path = "/applicants/search"
+        url = self.get_org_bound_url(path)
+        response = await self.request("GET", url, params=query_params.dict())
+        data = dto.ApplicantsPaginatedSearchResponse.parse_obj(response.json())
+        return data
+
     async def get_all_tags(
         self,
     ) -> dto.TagList:
