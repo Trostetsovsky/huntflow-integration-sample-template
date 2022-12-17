@@ -8,6 +8,7 @@ from hf_integration_sample.common_dto.hf_applicant import HFApplicantBase
 # TODO: define here needed data structures to intera ct with huntflow API.
 # Some samples are defined already, you can use it as is or extend if needed.
 
+
 class ApplicantSearchResponseItem(HFApplicantBase):
     pass
 
@@ -40,7 +41,7 @@ class Tag(BaseModel):
 
 
 class TagList(BaseModel):
-    items: list[Tag]
+    items: List[Tag]
 
 
 class UpdatedApplicantTags(BaseModel):

@@ -1,6 +1,6 @@
 import logging
 from functools import lru_cache
-from typing import List, Optional
+from typing import List
 
 import httpx
 
@@ -42,7 +42,7 @@ class HFAPIClient:
         return self.api_base + self.org_account_prefix.format(self.org_account_id) + path
 
     async def get_applicant_on_vacancy_statuses(
-            self,
+        self,
     ) -> List[dto.ApplicantOnVacancyStatus]:
         """Incapsulates API call to get all applicant on vacancy statuses.
         Working method, you may use it as an example to implement another API calls.
@@ -54,29 +54,36 @@ class HFAPIClient:
         return data.items
 
     async def get_all_tags(
-            self,
+        self,
     ) -> dto.TagList:
+        """Function returns a list of tags in the organization."""
         path = "/tags"
         url = self.get_org_bound_url(path)
         response = await self.request("GET", url)
         data = dto.TagList.parse_obj(response.json())
         return data.items
 
-    async def create_tag(
-            self,
-            tag_to_create: dto.Tag
-    ) -> dto.Tag:
+    async def create_tag(self, tag_to_create: dto.Tag) -> dto.Tag:
+        """Function creates a new tag in the organization and returns it."""
         path = "/tags"
         url = self.get_org_bound_url(path)
         response = await self.request("POST", url, data=tag_to_create.json())
-        data = dto.Tag.parse_obj(response.json())
+        return dto.Tag.parse_obj(response.json())
+
+    async def get_all_applicant_tags(self, applicant_id: str) -> dto.UpdatedApplicantTags:
+        """Function return a list of applicant's tags IDs"""
+        path = f"/applicants/{applicant_id}/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("GET", url)
+        data = dto.UpdatedApplicantTags.parse_obj(response.json())
         return data
 
     async def update_applicant_tags(
-            self,
-            applicant_id: str,
-            tags: dto.UpdatedApplicantTags,
+        self,
+        applicant_id: str,
+        tags: dto.UpdatedApplicantTags,
     ) -> dto.UpdatedApplicantTags:
+        """Function edits a list of applicant's tags and returns it."""
         path = f"/applicants/{applicant_id}/tags"
         url = self.get_org_bound_url(path)
         response = await self.request("POST", url, data=tags.json())
