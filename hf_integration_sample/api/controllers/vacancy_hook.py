@@ -26,6 +26,7 @@ async def process_vacancy_hook(hook_data: VacancyHookRequest):
                 query_params=query_params_for_search
             )
             if applicants_response.total_items > 0:
+                logger.info("Found applicant, add him to the first vacancy status")
                 all_vacancy_statuses = await apiclient.get_applicant_on_vacancy_statuses()
                 first_applicant_id_in_response = applicants_response.items[0].id
                 first_vacancy_status_id = all_vacancy_statuses[0].id
