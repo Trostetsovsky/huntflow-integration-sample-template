@@ -1,12 +1,11 @@
 import logging
 from functools import lru_cache
-from typing import List, Optional
+from typing import List
 
 import httpx
 
 from hf_integration_sample.integrations.hf_api import dto
 from hf_integration_sample.app.config import settings
-
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +52,65 @@ class HFAPIClient:
         response = await self.request("GET", url)
         data = dto.ApplicantOnVacancyStatusCollection.parse_obj(response.json())
         return data.items
+
+    async def add_applicant_to_the_vacancy(
+            self,
+            applicant_id: int,
+            vacancy_detail: dto.AddApplicantToTheVacancyBase
+    ) -> dto.AddApplicantToTheVacancyResponse:
+        """Function attaches an applicant to the vacancy."""
+        path = f"/applicants/{applicant_id}/vacancy"
+        url = self.get_org_bound_url(path)
+        response = await self.request("POST", url, data=vacancy_detail.json())
+        return dto.AddApplicantToTheVacancyResponse.parse_obj(response.json())
+
+    async def get_applicants(
+            self,
+            query_params: dto.ApplicantSearchQueryParams
+    ) -> dto.ApplicantsPaginatedSearchResponse:
+        """Returns the result of the applicant search."""
+        path = "/applicants/search"
+        url = self.get_org_bound_url(path)
+        response = await self.request("GET", url, params=query_params.dict())
+        data = dto.ApplicantsPaginatedSearchResponse.parse_obj(response.json())
+        return data
+
+    async def get_all_tags(
+        self,
+    ) -> dto.TagList:
+        """Function returns a list of tags in the organization."""
+        path = "/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("GET", url)
+        data = dto.TagList.parse_obj(response.json())
+        return data.items
+
+    async def create_tag(self, tag_to_create: dto.BaseTag) -> dto.Tag:
+        """Function creates a new tag in the organization and returns it."""
+        path = "/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("POST", url, data=tag_to_create.json())
+        return dto.Tag.parse_obj(response.json())
+
+    async def get_all_applicant_tags(self, applicant_id: str) -> dto.ListOfTagsId:
+        """Function return a list of applicant's tags IDs"""
+        path = f"/applicants/{applicant_id}/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("GET", url)
+        data = dto.ListOfTagsId.parse_obj(response.json())
+        return data
+
+    async def update_applicant_tags(
+        self,
+        applicant_id: str,
+        tags: dto.ListOfTagsId,
+    ) -> dto.ListOfTagsId:
+        """Function edits a list of applicant's tags and returns it."""
+        path = f"/applicants/{applicant_id}/tags"
+        url = self.get_org_bound_url(path)
+        response = await self.request("POST", url, data=tags.json())
+        data = dto.ListOfTagsId.parse_obj(response.json())
+        return data.tags
 
 
 @lru_cache(1)

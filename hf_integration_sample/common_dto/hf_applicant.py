@@ -21,3 +21,11 @@ class HFApplicantBase(BaseModel):
     last_name: Optional[str]
     middle_name: Optional[str]
     position: Optional[str]
+
+
+class SearchApplicantsBase(BaseModel):
+    q: Optional[str]
+    field: Optional[str]
+    vacancy: Optional[str] = "null"
+    page: int = 1
+    count: int = 30

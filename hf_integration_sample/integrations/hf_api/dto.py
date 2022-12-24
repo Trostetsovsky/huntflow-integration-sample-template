@@ -1,11 +1,14 @@
+import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
 
-from hf_integration_sample.common_dto.hf_applicant import HFApplicantBase
+from hf_integration_sample.common_dto.hf_applicant import HFApplicantBase, SearchApplicantsBase
 
-# TODO: define here needed data structures to intera ct with huntflow API.
-# Some samples are defined already, you can use it as is or extend if needed.
+
+class ApplicantSearchQueryParams(SearchApplicantsBase):
+    pass
+
 
 class ApplicantSearchResponseItem(HFApplicantBase):
     pass
@@ -30,3 +33,31 @@ class ApplicantOnVacancyStatus(BaseModel):
 
 class ApplicantOnVacancyStatusCollection(BaseModel):
     items: List[ApplicantOnVacancyStatus]
+
+
+class BaseTag(BaseModel):
+    name: str
+    color: str
+
+
+class Tag(BaseTag):
+    id: int
+
+
+class TagList(BaseModel):
+    items: List[Tag]
+
+
+class ListOfTagsId(BaseModel):
+    tags: List[int]
+
+
+class AddApplicantToTheVacancyBase(BaseModel):
+    vacancy: int
+    status: int
+
+
+class AddApplicantToTheVacancyResponse(AddApplicantToTheVacancyBase):
+    id: int
+    changed: datetime.datetime
+    rejection_reason: Optional[int]
