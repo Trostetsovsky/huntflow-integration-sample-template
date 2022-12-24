@@ -35,17 +35,20 @@ class ApplicantOnVacancyStatusCollection(BaseModel):
     items: List[ApplicantOnVacancyStatus]
 
 
-class Tag(BaseModel):
-    id: Optional[int]
+class BaseTag(BaseModel):
     name: str
     color: str
+
+
+class Tag(BaseTag):
+    id: int
 
 
 class TagList(BaseModel):
     items: List[Tag]
 
 
-class UpdatedApplicantTags(BaseModel):
+class ListOfTagsId(BaseModel):
     tags: List[int]
 
 

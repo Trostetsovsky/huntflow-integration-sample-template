@@ -67,8 +67,8 @@ class HFAPIClient:
     async def get_applicants(
             self,
             query_params: dto.ApplicantSearchQueryParams
-    ):
-        """Function returns the specified applicant."""
+    ) -> dto.ApplicantsPaginatedSearchResponse:
+        """Returns the result of the applicant search."""
         path = "/applicants/search"
         url = self.get_org_bound_url(path)
         response = await self.request("GET", url, params=query_params.dict())
@@ -85,31 +85,31 @@ class HFAPIClient:
         data = dto.TagList.parse_obj(response.json())
         return data.items
 
-    async def create_tag(self, tag_to_create: dto.Tag) -> dto.Tag:
+    async def create_tag(self, tag_to_create: dto.BaseTag) -> dto.Tag:
         """Function creates a new tag in the organization and returns it."""
         path = "/tags"
         url = self.get_org_bound_url(path)
         response = await self.request("POST", url, data=tag_to_create.json())
         return dto.Tag.parse_obj(response.json())
 
-    async def get_all_applicant_tags(self, applicant_id: str) -> dto.UpdatedApplicantTags:
+    async def get_all_applicant_tags(self, applicant_id: str) -> dto.ListOfTagsId:
         """Function return a list of applicant's tags IDs"""
         path = f"/applicants/{applicant_id}/tags"
         url = self.get_org_bound_url(path)
         response = await self.request("GET", url)
-        data = dto.UpdatedApplicantTags.parse_obj(response.json())
+        data = dto.ListOfTagsId.parse_obj(response.json())
         return data
 
     async def update_applicant_tags(
         self,
         applicant_id: str,
-        tags: dto.UpdatedApplicantTags,
-    ) -> dto.UpdatedApplicantTags:
+        tags: dto.ListOfTagsId,
+    ) -> dto.ListOfTagsId:
         """Function edits a list of applicant's tags and returns it."""
         path = f"/applicants/{applicant_id}/tags"
         url = self.get_org_bound_url(path)
         response = await self.request("POST", url, data=tags.json())
-        data = dto.UpdatedApplicantTags.parse_obj(response.json())
+        data = dto.ListOfTagsId.parse_obj(response.json())
         return data.tags
 
 
